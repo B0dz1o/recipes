@@ -1,0 +1,155 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}Upload Recipe - LaTeX Recipe Manager{% endblock %}
+
+{% block content %}
+<style>
+    .upload-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .upload-form h1 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+    }
+    .tags-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .tag-checkbox {
+        display: flex;
+        align-items: center;
+    }
+    .tag-checkbox input {
+        margin-right: 0.5rem;
+    }
+    .tag-checkbox label {
+        font-weight: normal;
+        margin-bottom: 0;
+    }
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        color: #e74c3c;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s;
+    }
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+    .btn-secondary {
+        background-color: #95a5a6;
+        color: white;
+    }
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+    }
+    .help-text {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin-top: 0.25rem;
+    }
+</style>
+
+<div class="upload-form">
+    <h1>Upload LaTeX Recipe</h1>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Recipe Title:</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <ul class="errorlist">
+                    {% for error in form.title.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.latex_file.id_for_label }}">LaTeX File (.tex):</label>
+            {{ form.latex_file }}
+            <div class="help-text">Upload a .tex file containing your recipe</div>
+            {% if form.latex_file.errors %}
+                <ul class="errorlist">
+                    {% for error in form.latex_file.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label>Tags (optional):</label>
+            <div class="tags-group">
+                {% for checkbox in form.tags %}
+                <div class="tag-checkbox">
+                    {{ checkbox }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="help-text">Select one or more tags to categorize your recipe</div>
+            {% if form.tags.errors %}
+                <ul class="errorlist">
+                    {% for error in form.tags.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Upload Recipe</button>
+            <a href="{% url 'recipe_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

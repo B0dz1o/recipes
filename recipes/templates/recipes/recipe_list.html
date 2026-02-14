@@ -1,0 +1,162 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}Recipes - LaTeX Recipe Manager{% endblock %}
+
+{% block content %}
+<style>
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .filter-section h2 {
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+    .tag-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .tag-filter {
+        display: inline-block;
+    }
+    .tag-filter input[type="checkbox"] {
+        margin-right: 0.3rem;
+    }
+    .tag-filter label {
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        background: #ecf0f1;
+        border-radius: 20px;
+        display: inline-block;
+    }
+    .tag-filter input[type="checkbox"]:checked + label {
+        background: #3498db;
+        color: white;
+    }
+    .filter-actions {
+        margin-top: 1rem;
+    }
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        background-color: #2980b9;
+    }
+    .btn-secondary {
+        background-color: #95a5a6;
+    }
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+    }
+    .recipes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    .recipe-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .recipe-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .recipe-card h3 {
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    .recipe-card .meta {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    .recipe-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .tag {
+        background: #3498db;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+    }
+    .no-recipes {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 8px;
+        color: #7f8c8d;
+    }
+</style>
+
+<h1>Recipe Collection</h1>
+
+{% if tags %}
+<div class="filter-section">
+    <h2>Filter by Tags</h2>
+    <form method="get" id="filterForm">
+        <div class="tag-filters">
+            {% for tag in tags %}
+            <div class="tag-filter">
+                <input type="checkbox" 
+                       id="tag_{{ tag.id }}" 
+                       name="tags" 
+                       value="{{ tag.id }}"
+                       {% if tag.id in selected_tags %}checked{% endif %}
+                       onchange="document.getElementById('filterForm').submit()">
+                <label for="tag_{{ tag.id }}">{{ tag.name }}</label>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="filter-actions">
+            <a href="{% url 'recipe_list' %}" class="btn btn-secondary">Clear Filters</a>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+{% if recipes %}
+<div class="recipes-grid">
+    {% for recipe in recipes %}
+    <div class="recipe-card">
+        <h3><a href="{% url 'recipe_detail' recipe.pk %}" style="text-decoration: none; color: inherit;">{{ recipe.title }}</a></h3>
+        <div class="meta">Uploaded: {{ recipe.uploaded_at|date:"M d, Y" }}</div>
+        {% if recipe.tags.all %}
+        <div class="recipe-tags">
+            {% for tag in recipe.tags.all %}
+            <span class="tag">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <a href="{% url 'recipe_detail' recipe.pk %}" class="btn">View Recipe</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-recipes">
+    <h2>No recipes found</h2>
+    <p>Upload your first LaTeX recipe to get started!</p>
+    <a href="{% url 'recipe_upload' %}" class="btn" style="margin-top: 1rem;">Upload Recipe</a>
+</div>
+{% endif %}
+{% endblock %}
