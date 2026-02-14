@@ -9,3 +9,8 @@ venv/
 *.egg-info/
 dist/
 build/
+.dockerignore
+*.swp
+*.swo
+*~
+
