@@ -37,6 +37,7 @@ docker-compose up --build
    - **Default Admin Credentials**: 
      - Username: `admin`
      - Password: `admin123`
+     - ⚠️ **IMPORTANT**: Change these credentials immediately if deploying to production!
 
 4. To stop the application:
 ```bash
@@ -189,6 +190,30 @@ python manage.py test
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+## Production Deployment Notes
+
+⚠️ **Before deploying to production:**
+
+1. **Change SECRET_KEY**: Set a unique secret key via environment variable
+   ```python
+   SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key')
+   ```
+
+2. **Disable DEBUG**: Set `DEBUG = False` in settings.py
+
+3. **Configure ALLOWED_HOSTS**: Add your domain name
+   ```python
+   ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
+   ```
+
+4. **Change Admin Credentials**: Update the default admin password immediately
+
+5. **Use a Production Server**: Replace `runserver` with a production WSGI server like Gunicorn
+
+6. **Configure Static Files**: Set up proper static file serving with nginx or similar
+
+7. **Database Backup**: Implement regular backups of the SQLite database or migrate to PostgreSQL
 
 ## License
 
